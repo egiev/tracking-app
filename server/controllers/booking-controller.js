@@ -1,7 +1,7 @@
-const password = require('generate-password');
-const Booking = require('../models/booking');
+const password = require("generate-password");
+const Booking = require("../models/booking");
 
-const { async_send_mail } = require('../utils/email-sender');
+const { async_send_mail } = require("../utils/email-sender");
 
 exports.list = async (req, res) => {
   try {
@@ -65,7 +65,7 @@ exports.changeStatus = async (req, res) => {
     );
     obj.status = status;
 
-    if (status === 'approve') {
+    if (status === "approve") {
       const code = password.generate({ length: 10, numbers: true });
 
       await Booking.findOneAndUpdate(
@@ -93,12 +93,16 @@ exports.start = async (req, res) => {
     const { code } = req.body;
     const obj = await Booking.findOne({ code });
 
-    res.status(200).json(obj);
+    if (obj) {
+      res.status(200).json(obj);
+    } else {
+      res.status(400).json("Invalid code");
+    }
   } catch (e) {
     res.status(400).json(e);
   }
 };
 
 exports.delete = async (req, res) => {
-  console.log('test');
+  console.log("test");
 };

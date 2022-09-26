@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useEffect } from 'react';
-import SocketIOClient from 'socket.io-client';
+import { useState } from "react";
+import { useEffect } from "react";
+import SocketIOClient from "socket.io-client";
 
-import { StartJourney } from '../../services/booking.service';
+import { StartJourney } from "../../services/booking.service";
 
-const endpoint = 'http://localhost:3300';
+const endpoint = "http://localhost:5000";
+
 const socket = SocketIOClient(endpoint);
 
 const Tracking = () => {
@@ -12,13 +13,13 @@ const Tracking = () => {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connected');
+    socket.on("connect", () => {
+      console.log("connected");
     });
 
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
+      socket.off("connect");
+      socket.off("disconnect");
     };
   }, []);
 
@@ -27,9 +28,9 @@ const Tracking = () => {
       navigator.geolocation.watchPosition((position) => {
         const { longitude, latitude } = position.coords;
 
-        console.log('test');
+        console.log("test");
 
-        socket.emit('tracking', {
+        socket.emit("tracking", {
           user: user.slug,
           coordinates: [longitude, latitude],
         });
@@ -51,12 +52,12 @@ const Tracking = () => {
   return (
     <div>
       <p>Test</p>
-      <input type="text" onChange={(e) => setCode(e.target.value)} />
-      <button type="button" onClick={verifyCode}>
+      <input type='text' onChange={(e) => setCode(e.target.value)} />
+      <button type='button' onClick={verifyCode}>
         Verify Code
       </button>
 
-      <button type="button" onClick={startTracking}>
+      <button type='button' onClick={startTracking}>
         Start
       </button>
     </div>

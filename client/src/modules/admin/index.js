@@ -32,7 +32,7 @@ const Admin = () => {
           padding: 4,
         }}
       >
-        <Typography variant="h4" sx={{ textTransform: 'uppercase', mb: 3 }}>
+        <Typography variant='h4' sx={{ textTransform: 'uppercase', mb: 3 }}>
           Login
         </Typography>
 

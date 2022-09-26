@@ -8,8 +8,11 @@ exports.connect = () => {
   });
 
   const con = mongoose.connection;
-  con.on('error', (error) => console.error(error));
+  con.on('error', (error) => {
+    console.error(error);
+  });
   con.once('open', () => {
+    console.log('asdf test');
     console.log('Successfully connected to DB');
   });
 };

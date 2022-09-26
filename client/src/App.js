@@ -1,20 +1,20 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 // import { ToastContainer } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 
-import { AuthContextProvider } from './store/auth.context';
-import ProtectedRoute from './components/protected-route/';
-import Admin from './modules/admin';
-import Booking from './modules/booking';
-import Home from './modules/home';
-import Tracking from './modules/tracking';
+import { AuthContextProvider } from "./store/auth.context";
+import ProtectedRoute from "./components/protected-route/";
+import Admin from "./modules/admin";
+import Booking from "./modules/booking";
+import Home from "./modules/home";
+import Tracking from "./modules/tracking";
 // import Dashboard from './modules/dashboard/Dashboard';
 
-import { theme } from './theme.config';
+import { theme } from "./theme.config";
 
 function App() {
   return (
@@ -27,10 +27,10 @@ function App() {
             <Router>
               <Routes>
                 <Route index element={<Home />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/start-journey" element={<Tracking />} />
+                <Route path='/admin' element={<Admin />} />
+                <Route path='/start-journey' element={<Tracking />} />
                 <Route element={<ProtectedRoute />}>
-                  <Route path="/booking" element={<Booking />} />
+                  <Route path='/booking' element={<Booking />} />
                 </Route>
               </Routes>
             </Router>
