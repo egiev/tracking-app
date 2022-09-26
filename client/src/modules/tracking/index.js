@@ -25,16 +25,20 @@ const Tracking = () => {
 
   const startTracking = () => {
     if (navigator && user) {
-      navigator.geolocation.watchPosition((position) => {
-        const { longitude, latitude } = position.coords;
+      navigator.geolocation.watchPosition(
+        (position) => {
+          const { longitude, latitude } = position.coords;
 
-        console.log("test");
+          console.log("test");
 
-        socket.emit("tracking", {
-          user: user.slug,
-          coordinates: [longitude, latitude],
-        });
-      });
+          socket.emit("tracking", {
+            user: user.slug,
+            coordinates: [longitude, latitude],
+          });
+        },
+        () => {},
+        { enableHighAccuracy: true }
+      );
     }
   };
 
