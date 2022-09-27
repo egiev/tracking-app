@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  gateway:
+    restart: always
+    image: nginx:1.15
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro"
+    links:
+      - frontend:frontend
+      - backend:backend
+    ports:
+      - "80:80"
+      - "443:443"
+
+  backend:
+    restart: always
+    image: node:18
+    working_dir: /app
+    expose:
+      - 5000
+    volumes:
+      - "./app/node_modules"
+      - ./server:/app
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongo
+    environment:
+      API_PORT:
+      DATABASE_URI:
+      TOKEN_KEY:
+    command: bash -c "npm install && npm run dev"
+
+  mongo:
+    image: amd64/mongo:4
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb:/data/db
+
+  frontend:
+    restart: always
+    image: node:18
+    working_dir: /app
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./app/node_modules"
+      - "./client:/app"
+    depends_on:
+      - backend
+    command: bash -c "npm install && chmod -R 777 node_modules/ && npm run start"
+
+volumes:
+  mongodb:

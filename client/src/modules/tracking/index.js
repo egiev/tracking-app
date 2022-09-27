@@ -3,10 +3,7 @@ import { useEffect } from "react";
 import SocketIOClient from "socket.io-client";
 
 import { StartJourney } from "../../services/booking.service";
-
-const endpoint = "http://localhost:5000";
-
-const socket = SocketIOClient(endpoint);
+const socket = SocketIOClient("");
 
 const Tracking = () => {
   const [code, setCode] = useState();

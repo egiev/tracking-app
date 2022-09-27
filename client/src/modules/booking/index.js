@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import SocketIOClient from "socket.io-client";
 
-const endpoint = "http://localhost:5000";
-const socket = SocketIOClient(endpoint);
+const socket = SocketIOClient("");
 
 const Booking = () => {
   useEffect(() => {
@@ -16,7 +15,7 @@ const Booking = () => {
     };
   }, []);
 
-  return <h1>Test</h1>;
+  return <h1>Testsss</h1>;
 };
 
 export default Booking;
