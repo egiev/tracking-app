@@ -1,10 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
-import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-import turf from "turf";
+// import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+// import turf from "turf";
 
 import styles from "./map.module.css";
 // import Select from "../select";
 
+const { turf, mapboxgl } = window;
+
+console.log(mapboxgl);
 mapboxgl.accessToken =
   "pk.eyJ1IjoicnZtYWJhbnRhIiwiYSI6ImNsNzhuZjlzbjBiazIzcXM2ZDZibnM5bjEifQ.3flpVG66izuFPJpZJrMKog";
 
