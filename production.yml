@@ -3,7 +3,7 @@ version: "3.9"
 services:
   backend:
     restart: always
-    image: node:18
+    image: .
     working_dir: /app
     volumes:
       - .:/app
@@ -14,10 +14,10 @@ services:
     ports:
       - 5000:5000
     environment:
-      API_PORT: 5000
-      DATABASE_URI: mongodb://root:example@mongo:27017
-      TOKEN_KEY: "SecretKey"
-    command: bash -c "cd client && npm install && chmod -R 777 node_modules/ && npm run build && cd ../server && npm install && npm run prod"
+      API_PORT:
+      DATABASE_URI:
+      TOKEN_KEY:
+    command: bash -c "cd client && npm install && npm run build && cd ../server && npm install && npm run prod"
 
   mongo:
     image: amd64/mongo:4
