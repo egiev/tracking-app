@@ -1,28 +1,34 @@
-const router = require('express').Router();
-const auth = require('./middleware/auth');
+const router = require("express").Router();
+const auth = require("./middleware/auth");
 
 // initialized express router
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   res.json({
-    status: 'Api working',
-    message: 'Test',
+    status: "Api working",
+    message: "Test",
   });
 });
 
 // Auth
-const { register, login } = require('./controllers/user-controller');
+const { register, login } = require("./controllers/user-controller");
 
-router.post('/auth/register', register);
-router.post('/auth/login', login);
+router.post("/auth/register", register);
+router.post("/auth/login", login);
 
 // Booking
-const booking = require('./controllers/booking-controller');
+const booking = require("./controllers/booking-controller");
 
-router.get('/booking', auth, booking.list);
-router.get('/booking/:slug', auth, booking.detail);
-router.post('/booking', booking.create);
-router.post('/booking/start', booking.start);
-router.patch('/booking/change-status', auth, booking.changeStatus);
-router.delete('/booking/:slug', auth, booking.delete);
+router.get("/booking", auth, booking.list);
+router.get("/booking/:slug", auth, booking.detail);
+router.post("/booking", booking.create);
+router.post("/booking/start", booking.start);
+router.patch("/booking/change-status", auth, booking.changeStatus);
+router.delete("/booking/:slug", auth, booking.delete);
+
+// Branch
+const branch = require("./controllers/branch-controller");
+
+router.get("/branch", branch.list);
+router.post("/branch", auth, branch.create);
 
 module.exports = router;

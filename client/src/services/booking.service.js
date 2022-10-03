@@ -1,9 +1,9 @@
-import { POST } from './api.service';
+import { POST } from "./api.service";
 
 export const AddBooking = (data) => {
-  return POST('/api/v1/booking', data);
+  return POST("/api/v1/booking", data);
 };
 
-export const StartJourney = (data) => {
-  return POST('/api/v1/booking/start', data);
+export const StartTracking = (data) => {
+  return POST("/api/v1/booking/start", data);
 };

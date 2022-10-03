@@ -5,9 +5,9 @@ const User = require("../models/user");
 
 exports.register = async (req, res) => {
   try {
-    const { first_name, last_name, email, password } = req.body;
+    const { first_name, last_name, email, password, branch } = req.body;
 
-    if (!(email && password && first_name && last_name)) {
+    if (!(email && password && first_name && last_name && branch)) {
       res.status(400).send("All input is required");
     }
 
@@ -20,17 +20,19 @@ exports.register = async (req, res) => {
     encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create user in our database
-    const user = await User.create({
+    const user = await new User({
       first_name,
       last_name,
       email: email.toLowerCase(),
       password: encryptedPassword,
+      branch,
     });
+    user.save();
 
     // return new user
     res.status(200).json(user);
-  } catch (err) {
-    console.log(err);
+  } catch (e) {
+    res.status(400).json(e);
   }
 };
 
@@ -45,7 +47,7 @@ exports.login = async (req, res) => {
     }
 
     // Validate if user exist in our database
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate("virtualBranch");
 
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
@@ -59,9 +61,9 @@ exports.login = async (req, res) => {
 
       const data = {
         email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
+        name: `${user.first_name} ${user.last_name}`,
         token: token,
+        branch: user.virtualBranch,
       };
 
       // user

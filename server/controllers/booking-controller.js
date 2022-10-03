@@ -26,23 +26,15 @@ exports.detail = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      contact,
-      address,
-      companions,
-      date_of_arrival,
-      date_of_departure,
-    } = req.body;
+    const { branch, name, email, contact, companions, date_of_departure } =
+      req.body;
 
     const obj = await Booking.create({
+      branch,
       name,
       email,
       contact,
-      address,
       companions,
-      date_of_arrival,
       date_of_departure,
     });
 

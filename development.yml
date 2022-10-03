@@ -13,7 +13,7 @@ services:
       - "80:80"
       - "443:443"
 
-  backend:
+  backend: &backend
     restart: always
     build: .
     working_dir: /app
@@ -31,7 +31,7 @@ services:
       TOKEN_KEY:
     command: bash -c "npm install && npm run dev"
 
-  frontend:
+  frontend: &frontend
     restart: always
     build: .
     working_dir: /app
@@ -46,15 +46,29 @@ services:
     command: bash -c "npm install && npm run start"
 
   mongo:
-    image: amd64/mongo:4
+    image: mongo:5
     restart: always
-    ports:
-      - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME:
+      MONGO_INITDB_ROOT_PASSWORD:
     volumes:
       - mongodb:/data/db
+
+  mongo-express:
+    restart: unless-stopped
+    image: mongo-express
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_SERVER:
+      ME_CONFIG_MONGODB_AUTH_USERNAME:
+      ME_CONFIG_MONGODB_AUTH_PASSWORD:
+
+networks:
+  default:
+    name: mongo-express-network
 
 volumes:
   mongodb:

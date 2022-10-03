@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -10,15 +10,19 @@ import {
   Container,
   Button,
   MenuItem,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+  useTheme,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
-import styles from './navigation.module.css';
+import styles from "./navigation.module.css";
 
-const pages = ['Home', 'About', 'Announcement'];
+const pages = [{ path: "/", label: "Home" }];
 
 const Navigation = () => {
+  const { palette } = useTheme();
+  const location = useLocation();
   const navigate = useNavigate();
+
   const [scrollY, setScrollY] = useState(0);
   const [anchorElNav, setAnchorElNav] = useState(null);
 
@@ -31,97 +35,102 @@ const Navigation = () => {
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', () => {
+    window.addEventListener("scroll", () => {
       setScrollY(window.scrollY);
     });
 
     return () => {
-      window.removeEventListener('scroll', () => {});
+      window.removeEventListener("scroll", () => {});
     };
   }, []);
 
+  const isHomePage = () => {
+    return location.pathname === "/";
+  };
+
   return (
     <AppBar
-      position="fixed"
-      className={`${scrollY > 100 && styles.appBar}`}
+      className={`${scrollY > 100 && isHomePage() && styles.appBar}`}
       sx={{
-        color: '#fff',
-        backgroundColor: 'transparent',
-        boxShadow: 'none',
-        transition: 'all .3s ease',
+        position: isHomePage() ? "fixed" : "relative",
+        color: isHomePage() ? "#fff" : palette.gray["500"],
+        backgroundColor: isHomePage() ? "transparent" : "#fff",
+        boxShadow: "none",
+        height: "70px",
+        transition: "all .3s ease",
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <Typography
-            variant="h6"
+            variant='h6'
             noWrap
-            component="a"
-            href="/"
+            component='a'
+            href='/'
             sx={{
               mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
+              display: { xs: "none", md: "flex" },
+              fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+              textTransform: "uppercase",
             }}
           >
-            Mt. Kalisungan
+            Akyat Pinas
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
+              size='large'
+              aria-label='account of current user'
+              aria-controls='menu-appbar'
+              aria-haspopup='true'
               onClick={handleOpenNavMenu}
-              color="inherit"
+              color='inherit'
             >
               <MenuIcon />
             </IconButton>
             <Menu
-              id="menu-appbar"
+              id='menu-appbar'
               anchorEl={anchorElNav}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: "bottom",
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
+                vertical: "top",
+                horizontal: "left",
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: 'block', md: 'none' },
+                display: { xs: "block", md: "none" },
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                  <Typography textAlign='center'>{page.label}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
           <Typography
-            variant="h5"
+            variant='h5'
             noWrap
-            component="a"
-            href=""
+            component='a'
+            href=''
             sx={{
               mr: 2,
-              display: { xs: 'flex', md: 'none' },
+              display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: 'monospace',
+              fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
             }}
           >
             LOGO
@@ -129,22 +138,31 @@ const Navigation = () => {
           <Box
             sx={{
               flexGrow: 1,
-              justifyContent: 'flex-end',
-              display: { xs: 'none', md: 'flex' },
+              justifyContent: "flex-end",
+              display: { xs: "none", md: "flex" },
             }}
           >
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                onClick={() => navigate(`${page.path}`)}
+                sx={{
+                  my: 2,
+                  color: isHomePage() ? "#fff" : palette.gray["500"],
+                  display: "block",
+                }}
               >
-                {page}
+                {page.label}
               </Button>
             ))}
+
             <Button
-              onClick={() => navigate('/start-journey')}
-              sx={{ my: 2, color: 'white', display: 'block' }}
+              onClick={() => navigate("/start-journey")}
+              sx={{
+                my: 2,
+                color: isHomePage() ? "#fff" : palette.gray["500"],
+                display: "block",
+              }}
             >
               Start Journey
             </Button>

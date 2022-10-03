@@ -22,13 +22,23 @@ services:
   mongo:
     image: amd64/mongo:4
     restart: always
-    ports:
-      - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME:
+      MONGO_INITDB_ROOT_PASSWORD:
     volumes:
       - mongodb:/data/db
+
+  mongo-express:
+    restart: unless-stopped
+    image: mongo-express
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_SERVER:
+      ME_CONFIG_MONGODB_AUTH_USERNAME:
+      ME_CONFIG_MONGODB_AUTH_PASSWORD:
 
 volumes:
   mongodb:

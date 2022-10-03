@@ -8,6 +8,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 import { AuthContextProvider } from "./store/auth.context";
 import ProtectedRoute from "./components/protected-route/";
+import { BranchContextProvider } from "./store/branch.context";
 import Admin from "./modules/admin";
 import Booking from "./modules/booking";
 import Home from "./modules/home";
@@ -23,18 +24,20 @@ function App() {
         <CssBaseline />
 
         <AuthContextProvider>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <Router>
-              <Routes>
-                <Route index element={<Home />} />
-                <Route path='/admin' element={<Admin />} />
-                <Route path='/start-journey' element={<Tracking />} />
-                <Route element={<ProtectedRoute />}>
-                  <Route path='/booking' element={<Booking />} />
-                </Route>
-              </Routes>
-            </Router>
-          </LocalizationProvider>
+          <BranchContextProvider>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <Router>
+                <Routes>
+                  <Route index element={<Home />} />
+                  <Route path='/admin' element={<Admin />} />
+                  <Route path='/start-journey' element={<Tracking />} />
+                  <Route element={<ProtectedRoute />}>
+                    <Route path='/booking' element={<Booking />} />
+                  </Route>
+                </Routes>
+              </Router>
+            </LocalizationProvider>
+          </BranchContextProvider>
         </AuthContextProvider>
       </ThemeProvider>
     </>

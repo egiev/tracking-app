@@ -1,11 +1,24 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-  first_name: { type: String, default: null },
-  last_name: { type: String, default: null },
-  email: { type: String, unique: true },
-  password: { type: String },
-  token: { type: String },
+const UserSchema = new mongoose.Schema(
+  {
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
+    branch: { type: String, required: true },
+    token: { type: String },
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+
+UserSchema.virtual("virtualBranch", {
+  ref: "Branch",
+  localField: "branch",
+  foreignField: "slug",
 });
 
-module.exports = mongoose.model('user', UserSchema);
+module.exports = mongoose.model("user", UserSchema);

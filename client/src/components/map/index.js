@@ -7,7 +7,6 @@ import styles from "./map.module.css";
 
 const { turf, mapboxgl } = window;
 
-console.log(mapboxgl);
 mapboxgl.accessToken =
   "pk.eyJ1IjoicnZtYWJhbnRhIiwiYSI6ImNsNzhuZjlzbjBiazIzcXM2ZDZibnM5bjEifQ.3flpVG66izuFPJpZJrMKog";
 
@@ -26,15 +25,13 @@ const Map = () => {
   useEffect(() => {
     if (map.current) return;
 
-    console.log("lajsdfsss");
-
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/rvmabanta/cl8mw8hs0000n14mi0hmm3lmg",
       //   center: [lng, lat],
       center: [6.58968, 45.39701],
       zoom: zoom,
-      pitch: 76,
+      pitch: 64,
       bearing: 150,
       // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
       interactive: false,
@@ -49,8 +46,6 @@ const Map = () => {
         ).then((response) => response.json()),
         map.current.once("load"),
       ]);
-
-      console.log(geojson);
 
       setPenrouteGeojson(geojson);
 

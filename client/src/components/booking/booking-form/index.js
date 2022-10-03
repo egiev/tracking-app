@@ -1,27 +1,53 @@
-import { useState } from 'react';
-import { Box, Button, Grid, TextField, Typography } from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
-import moment from 'moment';
+import { useContext, useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import moment from "moment";
 
-import { AddBooking } from '../../../services/booking.service';
+import { BranchContext } from "../../../store/branch.context";
+import { AddBooking } from "../../../services/booking.service";
+import { GetBranches } from "../../../services/static.service";
+// import branch from "../../../../../server/models/branch";
 
 const BookingForm = () => {
+  const branchCtx = useContext(BranchContext);
+
   const initialState = {
-    name: '',
-    email: '',
-    contact: '',
-    address: '',
-    companions: '',
-    date_of_arrival: moment(),
+    branch: "",
+    name: "",
+    email: "",
+    contact: "",
+    companions: "",
     date_of_departure: moment(),
   };
   const [bookingValues, setBookingValues] = useState(initialState);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  useEffect(() => {
+    getBranches();
+  }, []);
+
+  const getBranches = async () => {
+    try {
+      const { data } = await GetBranches();
+
+      branchCtx.setBranches(data);
+    } catch (e) {}
+  };
+
   const onHandleChange = (identifier, event) => {
     let value;
 
-    identifier === 'date_of_arrival' || identifier === 'date_of_departure'
+    identifier === "date_of_departure"
       ? (value = moment(event))
       : (value = event.target.value);
 
@@ -37,9 +63,8 @@ const BookingForm = () => {
     try {
       // Format payload
       const data = { ...bookingValues };
-      data.date_of_arrival = moment(data.date_of_arrival).format('MM/DD/YYYY');
-      data.date_of_departure = moment(data.date_of_arrival).format(
-        'MM/DD/YYYY'
+      data.date_of_departure = moment(data.date_of_departure).format(
+        "MM/DD/YYYY"
       );
 
       // Add Booking
@@ -62,7 +87,7 @@ const BookingForm = () => {
         <Box>
           <Typography
             sx={{
-              background: '#e7ffec',
+              background: "#e7ffec",
               borderRadius: 0.5,
               padding: 2.5,
               mb: 2,
@@ -80,103 +105,102 @@ const BookingForm = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#fff',
-        padding: 6,
+        display: "flex",
+        alignItems: "center",
+        background: "#fff",
+        padding: 4,
         borderRadius: 2,
       }}
     >
-      <Typography variant="h4" sx={{ textTransform: 'uppercase', mb: 3 }}>
-        Book your Tour
-      </Typography>
+      <Grid container spacing={1}>
+        <Grid item md={2} xs={12}>
+          <FormControl fullWidth>
+            <InputLabel id='branch-label'>Mountain</InputLabel>
+            <Select
+              required
+              labelId='branch-label'
+              id='branch'
+              label='Branch'
+              value={bookingValues.branch}
+              onChange={onHandleChange.bind(this, "branch")}
+            >
+              {branchCtx.data &&
+                branchCtx.data.map((i) => (
+                  <MenuItem key={i.slug} value={i.slug}>
+                    {i.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+        </Grid>
 
-      {renderAlert()}
-
-      <TextField
-        required
-        label="Name"
-        value={bookingValues.name}
-        onChange={onHandleChange.bind(this, 'name')}
-        sx={{ mb: 2 }}
-      />
-
-      <TextField
-        required
-        label="Address"
-        value={bookingValues.address}
-        onChange={onHandleChange.bind(this, 'address')}
-        sx={{ mb: 2 }}
-      />
-
-      <Grid container spacing={2}>
-        <Grid item md={6} xs={12}>
+        <Grid item md={2} xs={12}>
           <TextField
             required
-            label="Email"
+            label='Name'
+            value={bookingValues.name}
+            onChange={onHandleChange.bind(this, "name")}
+          />
+        </Grid>
+
+        <Grid item md={2} xs={12}>
+          <TextField
+            required
+            label='Email'
             value={bookingValues.email}
-            onChange={onHandleChange.bind(this, 'email')}
-            sx={{ mb: 2, width: '100%' }}
+            onChange={onHandleChange.bind(this, "email")}
+            sx={{ width: "100%" }}
           />
         </Grid>
 
-        <Grid item md={6} xs={12}>
+        <Grid item md={2} xs={12}>
           <TextField
             required
-            label="Contact No."
+            label='Contact No.'
             value={bookingValues.contact}
-            onChange={onHandleChange.bind(this, 'contact')}
-            sx={{ mb: 2, width: '100%' }}
+            onChange={onHandleChange.bind(this, "contact")}
+            sx={{ width: "100%" }}
           />
         </Grid>
-      </Grid>
 
-      <Grid container spacing={2}>
-        <Grid item md={4} xs={12}>
+        <Grid item md={2} xs={12}>
           <DesktopDatePicker
-            label="Arrival"
-            inputFormat="MM/DD/YYYY"
-            value={bookingValues.date_of_arrival}
-            onChange={onHandleChange.bind(this, 'date_of_arrival')}
+            label='Departure'
+            inputFormat='MM/DD/YYYY'
+            value={bookingValues.date_of_departure}
+            onChange={onHandleChange.bind(this, "date_of_departure")}
             minDate={moment()}
             renderInput={(params) => (
-              <TextField {...params} sx={{ mb: 2, width: '100%' }} />
+              <TextField {...params} sx={{ width: "100%" }} />
             )}
           />
         </Grid>
 
-        <Grid item md={4} xs={12}>
-          <DesktopDatePicker
-            label="Departure"
-            inputFormat="MM/DD/YYYY"
-            value={bookingValues.date_of_departure}
-            onChange={onHandleChange.bind(this, 'date_of_departure')}
-            minDate={bookingValues.date_of_arrival}
-            renderInput={(params) => (
-              <TextField {...params} sx={{ mb: 2, width: '100%' }} />
-            )}
-          />
-        </Grid>
-        <Grid item md={4} xs={12}>
+        <Grid item md={1} xs={12}>
           <TextField
             required
-            label="Compoanion(s)"
-            type="number"
+            label='Companion(s)'
+            type='number'
             value={bookingValues.companions}
-            onChange={onHandleChange.bind(this, 'companions')}
-            sx={{ mb: 2, width: '100%' }}
+            onChange={onHandleChange.bind(this, "companions")}
+            sx={{ width: "100%" }}
           />
         </Grid>
-      </Grid>
 
-      <Button
-        variant="contained"
-        size="large"
-        sx={{ mt: 3, height: '50px' }}
-        onClick={onSubmitBookingHandler}
-      >
-        Book
-      </Button>
+        <Grid item md={1} xs={12}>
+          <Button
+            variant='contained'
+            size='large'
+            sx={{
+              height: "100%",
+              width: "100%",
+            }}
+            onClick={onSubmitBookingHandler}
+          >
+            Book
+          </Button>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
