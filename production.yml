@@ -20,7 +20,7 @@ services:
     command: bash -c "cd client && npm install && npm run build && cd ../server && npm install && npm run prod"
 
   mongo:
-    image: amd64/mongo:4
+    image: mongo:5
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME:
