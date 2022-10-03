@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  backend:
+  backend: &backend
     restart: always
-    image: .
+    build: .
     working_dir: /app
     volumes:
       - .:/app
