@@ -56,7 +56,6 @@ const Navigation = () => {
         color: isHomePage() ? "#fff" : palette.gray["500"],
         backgroundColor: isHomePage() ? "transparent" : "#fff",
         boxShadow: "none",
-        height: "70px",
         transition: "all .3s ease",
       }}
     >

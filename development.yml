@@ -29,6 +29,9 @@ services:
       API_PORT:
       DATABASE_URI:
       TOKEN_KEY:
+      EMAIL_SENDER_SERVICE:
+      EMAIL_SENDER_USERNAME:
+      EMAIL_SENDER_PASSWORD:
     command: bash -c "npm install && npm run dev"
 
   frontend: &frontend

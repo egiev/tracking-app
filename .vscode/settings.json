@@ -6,5 +6,6 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "workbench.iconTheme": "material-icon-theme",
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "[javascript]": { "editor.formatOnSave": true }
 }

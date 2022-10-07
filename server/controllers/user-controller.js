@@ -49,6 +49,8 @@ exports.login = async (req, res) => {
     // Validate if user exist in our database
     const user = await User.findOne({ email }).populate("virtualBranch");
 
+    console.log(user);
+
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
       const token = await jwt.sign(
@@ -60,10 +62,11 @@ exports.login = async (req, res) => {
       );
 
       const data = {
+        slug: user.slug,
         email: user.email,
         name: `${user.first_name} ${user.last_name}`,
         token: token,
-        branch: user.virtualBranch,
+        branch: user.virtualBranch[0],
       };
 
       // user

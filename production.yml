@@ -17,6 +17,9 @@ services:
       API_PORT:
       DATABASE_URI:
       TOKEN_KEY:
+      EMAIL_SENDER_SERVICE:
+      EMAIL_SENDER_USERNAME:
+      EMAIL_SENDER_PASSWORD:
     command: bash -c "cd client && npm install && npm run build && cd ../server && npm install && npm run prod"
 
   mongo:

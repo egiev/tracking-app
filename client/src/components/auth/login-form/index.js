@@ -1,16 +1,16 @@
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, TextField } from '@mui/material';
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, TextField } from "@mui/material";
 
-import { Authenticate } from '../../../services/auth.service';
-import { AuthContext } from '../../../store/auth.context';
+import { Authenticate } from "../../../services/auth.service";
+import { AuthContext } from "../../../store/auth.context";
 
 const LoginForm = () => {
   const { authenticate } = useContext(AuthContext);
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
 
   const onHandleChange = (identifier, event) => {
@@ -32,7 +32,7 @@ const LoginForm = () => {
 
       authenticate(data);
 
-      navigate('/booking');
+      navigate("/booking");
     } catch (e) {}
   };
 
@@ -40,27 +40,28 @@ const LoginForm = () => {
     <>
       <TextField
         required
-        label="Username"
+        label='Username'
         value={formValues.username}
-        onChange={onHandleChange.bind(this, 'username')}
-        sx={{ mb: 2, width: '100%' }}
+        onChange={onHandleChange.bind(this, "username")}
+        sx={{ mb: 2, width: "100%" }}
       />
 
       <TextField
         required
-        label="Password"
+        type='password'
+        label='Password'
         value={formValues.password}
-        onChange={onHandleChange.bind(this, 'password')}
-        sx={{ mb: 2, width: '100%' }}
+        onChange={onHandleChange.bind(this, "password")}
+        sx={{ mb: 2, width: "100%" }}
       />
 
       <Button
-        variant="contained"
-        size="large"
-        sx={{ mt: 3, height: '50px' }}
+        variant='contained'
+        size='large'
+        sx={{ mt: 3, height: "50px" }}
         onClick={onLoginHandler}
       >
-        Book
+        Login
       </Button>
     </>
   );

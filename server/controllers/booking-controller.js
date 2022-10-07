@@ -48,31 +48,18 @@ exports.changeStatus = async (req, res) => {
   try {
     const { slug, status } = req.body;
 
-    const obj = await Booking.findOneAndUpdate(
-      { slug },
-      { status },
-      {
-        upsert: true,
-      }
-    );
+    const obj = await Booking.findOne({ slug });
     obj.status = status;
 
+    // Send an email when status is approve
     if (status === "approve") {
       const code = password.generate({ length: 10, numbers: true });
-
-      await Booking.findOneAndUpdate(
-        { slug },
-        { code },
-        {
-          upsert: true,
-        }
-      );
-
       obj.code = code;
 
       async_send_mail(obj.email);
     }
 
+    obj.save();
     res.status(200).json(obj);
   } catch (e) {
     console.log(e);

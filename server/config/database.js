@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { DATABASE_URI } = process.env;
 
 exports.connect = () => {
@@ -8,11 +8,10 @@ exports.connect = () => {
   });
 
   const con = mongoose.connection;
-  con.on('error', (error) => {
+  con.on("error", (error) => {
     console.error(error);
   });
-  con.once('open', () => {
-    console.log('asdf test');
-    console.log('Successfully connected to DB');
+  con.once("open", () => {
+    console.log("Successfully connected to DB");
   });
 };

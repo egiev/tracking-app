@@ -15,12 +15,10 @@ const TrackingMap = ({ coordinate }) => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/rvmabanta/cl8mw8hs0000n14mi0hmm3lmg",
-      //   center: [lng, lat],
       center: coordinate,
-      zoom: 13,
+      zoom: 16,
       pitch: 64,
       bearing: 150,
-      // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
       interactive: false,
       hash: false,
     });
