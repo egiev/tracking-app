@@ -1,10 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 
-import styles from "./tracking-map.module.css";
-
 const { mapboxgl } = window;
 
-const TrackingMap = ({ coordinate }) => {
+const styles = {
+  wrapper: {
+    position: "relative",
+    height: "100%",
+    width: "100%",
+  },
+
+  mapContainer: {
+    position: "absolute",
+    top: "0",
+    bottom: "0",
+    height: "100%",
+    width: "100%",
+  },
+};
+
+const TrackingMap = ({ coordinates }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [marker, setMarker] = useState();
@@ -15,7 +29,7 @@ const TrackingMap = ({ coordinate }) => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/rvmabanta/cl8mw8hs0000n14mi0hmm3lmg",
-      center: coordinate,
+      center: coordinates,
       zoom: 16,
       pitch: 64,
       bearing: 150,
@@ -24,6 +38,7 @@ const TrackingMap = ({ coordinate }) => {
     });
 
     addMarker();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -31,8 +46,9 @@ const TrackingMap = ({ coordinate }) => {
     if (marker) marker.remove();
 
     addMarker();
-    map.current.setCenter(coordinate);
-  }, [coordinate]);
+    map.current.setCenter(coordinates);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coordinates]);
 
   const addMarker = () => {
     const marker = new mapboxgl.Marker({
@@ -42,7 +58,7 @@ const TrackingMap = ({ coordinate }) => {
       pitchAlignment: "auto",
       rotationAlignment: "auto",
     })
-      .setLngLat(coordinate)
+      .setLngLat(coordinates)
       // .setPopup(popup)
       .addTo(map.current);
     // .togglePopup();

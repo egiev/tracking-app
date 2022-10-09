@@ -14,8 +14,6 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
-import styles from "./navigation.module.css";
-
 const pages = [{ path: "/", label: "Home" }];
 
 const Navigation = () => {
@@ -48,20 +46,21 @@ const Navigation = () => {
     return location.pathname === "/";
   };
 
+  console.log(scrollY);
+
   return (
     <AppBar
-      className={`${scrollY > 100 && isHomePage() && styles.appBar}`}
       sx={{
         position: {
           md: isHomePage() ? "fixed" : "relative",
           xs: "relative",
         },
         color: {
-          md: isHomePage() ? "#fff" : palette.gray["500"],
+          md: scrollY < 100 && isHomePage() ? "#fff" : palette.gray["500"],
           xs: palette.gray["500"],
         },
         backgroundColor: {
-          md: isHomePage() ? "transparent" : "#fff",
+          md: scrollY < 100 && isHomePage() ? "transparent" : "#fff",
           xs: "#fff",
         },
         boxShadow: "none",
@@ -156,7 +155,10 @@ const Navigation = () => {
                 onClick={() => navigate(`${page.path}`)}
                 sx={{
                   my: 2,
-                  color: isHomePage() ? "#fff" : palette.gray["500"],
+                  color:
+                    scrollY < 100 && isHomePage()
+                      ? "#fff"
+                      : palette.gray["500"],
                   display: "block",
                 }}
               >
@@ -168,7 +170,8 @@ const Navigation = () => {
               onClick={() => navigate("/start-journey")}
               sx={{
                 my: 2,
-                color: isHomePage() ? "#fff" : palette.gray["500"],
+                color:
+                  scrollY < 100 && isHomePage() ? "#fff" : palette.gray["500"],
                 display: "block",
               }}
             >

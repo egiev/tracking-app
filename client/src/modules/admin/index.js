@@ -1,38 +1,38 @@
-import { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography } from '@mui/material';
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Box, Typography } from "@mui/material";
 
-import { AuthContext } from '../../store/auth.context';
-import LoginForm from '../../components/auth/login-form';
+import { AuthContext } from "../../store/auth.context";
+import LoginForm from "../../components/auth/login-form";
 
 const Admin = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    if (user) navigate('/booking', { replace: true });
-  }, [user]);
+    if (user) navigate("/booking", { replace: true });
+  }, [user, navigate]);
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          background: '#fff',
-          maxWidth: '400px',
-          width: '100%',
+          display: "flex",
+          flexDirection: "column",
+          background: "#fff",
+          maxWidth: "400px",
+          width: "100%",
           padding: 4,
         }}
       >
-        <Typography variant='h4' sx={{ textTransform: 'uppercase', mb: 3 }}>
+        <Typography variant='h4' sx={{ textTransform: "uppercase", mb: 3 }}>
           Login
         </Typography>
 

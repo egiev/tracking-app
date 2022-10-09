@@ -16,7 +16,6 @@ import moment from "moment";
 import { BranchContext } from "../../../store/branch.context";
 import { AddBooking } from "../../../services/booking.service";
 import { GetBranches } from "../../../services/static.service";
-// import branch from "../../../../../server/models/branch";
 
 const BookingForm = () => {
   const branchCtx = useContext(BranchContext);
@@ -34,6 +33,7 @@ const BookingForm = () => {
 
   useEffect(() => {
     getBranches();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getBranches = async () => {
@@ -112,6 +112,8 @@ const BookingForm = () => {
         borderRadius: 2,
       }}
     >
+      {renderAlert()}
+
       <Grid container spacing={1}>
         <Grid item md={2} xs={12}>
           <FormControl fullWidth>

@@ -1,12 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { useEffect } from "react";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import AOS from "aos";
 
 import Navigation from "../../components/navigation";
@@ -16,8 +9,6 @@ import PulagImg1 from "../../assets/images/pulag1.jpg";
 import styles from "./home.module.css";
 
 const Home = () => {
-  const { palette } = useTheme();
-
   useEffect(() => {
     AOS.init();
   }, []);
