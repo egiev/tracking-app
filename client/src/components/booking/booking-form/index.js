@@ -140,6 +140,7 @@ const BookingForm = () => {
             label='Name'
             value={bookingValues.name}
             onChange={onHandleChange.bind(this, "name")}
+            sx={{ width: "100%" }}
           />
         </Grid>
 

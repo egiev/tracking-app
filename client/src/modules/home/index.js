@@ -42,7 +42,6 @@ const Home = () => {
             <Typography
               variant='h3'
               sx={{
-                // color: palette.primary.main,
                 textTransform: "uppercase",
                 lineHeight: 1.4,
               }}

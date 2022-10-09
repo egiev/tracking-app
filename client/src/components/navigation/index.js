@@ -52,9 +52,18 @@ const Navigation = () => {
     <AppBar
       className={`${scrollY > 100 && isHomePage() && styles.appBar}`}
       sx={{
-        position: isHomePage() ? "fixed" : "relative",
-        color: isHomePage() ? "#fff" : palette.gray["500"],
-        backgroundColor: isHomePage() ? "transparent" : "#fff",
+        position: {
+          md: isHomePage() ? "fixed" : "relative",
+          xs: "relative",
+        },
+        color: {
+          md: isHomePage() ? "#fff" : palette.gray["500"],
+          xs: palette.gray["500"],
+        },
+        backgroundColor: {
+          md: isHomePage() ? "transparent" : "#fff",
+          xs: "#fff",
+        },
         boxShadow: "none",
         transition: "all .3s ease",
       }}
