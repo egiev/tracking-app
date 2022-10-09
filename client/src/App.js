@@ -9,13 +9,13 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { AuthContextProvider } from "./store/auth.context";
 import ProtectedRoute from "./components/protected-route/";
 import { BranchContextProvider } from "./store/branch.context";
-import Admin from "./modules/admin";
-import Booking from "./modules/booking";
+import Auth from "./modules/admin";
 import Home from "./modules/home";
 import Tracking from "./modules/tracking";
 // import Dashboard from './modules/dashboard/Dashboard';
 
 import { theme } from "./theme.config";
+import Dashboard from "./modules/admin/dashboard";
 
 function App() {
   return (
@@ -29,10 +29,10 @@ function App() {
               <Router>
                 <Routes>
                   <Route index element={<Home />} />
-                  <Route path='/admin' element={<Admin />} />
                   <Route path='/start-journey' element={<Tracking />} />
+                  <Route path='/admin' element={<Auth />} />
                   <Route element={<ProtectedRoute />}>
-                    <Route path='/booking' element={<Booking />} />
+                    <Route path='/admin/dashboard' element={<Dashboard />} />
                   </Route>
                 </Routes>
               </Router>

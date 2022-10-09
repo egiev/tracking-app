@@ -1,44 +1,29 @@
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  stepIconClasses,
-  TextField,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import SocketIOClient from "socket.io-client";
 
 import Navigation from "../../components/navigation";
 import TrackingMap from "../../components/tracking/tracking-map";
 import VerifyTrackingCode from "../../components/tracking/tracking-verify-form";
 
-import Map from "../../components/map";
+import SocketIOClient from "socket.io-client";
 const socket = SocketIOClient("/use-tracking-socket");
 
 const Tracking = () => {
-  const [code, setCode] = useState();
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [isJourneyStarted, setIsJourneyStarted] = useState(false);
-  const [coordinate, setCoordinate] = useState([]);
+  const [coordinates, setCoordinates] = useState([]);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("connected");
-    });
-
     socket.on("receive message", (data) => {
       console.log("receive", data);
       setMessages((prev) => [...prev, data]);
     });
 
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
+      socket.off("receive message");
     };
   }, []);
 
@@ -56,8 +41,7 @@ const Tracking = () => {
           });
 
           setIsJourneyStarted(true);
-          setCoordinate([longitude, latitude]);
-          console.log("successful");
+          setCoordinates([longitude, latitude]);
         },
         () => {},
         { enableHighAccuracy: true }
@@ -90,8 +74,6 @@ const Tracking = () => {
   const onHandleSendMessage = () => {
     const { slug, branch } = user;
 
-    console.log(message);
-
     if (!!message) {
       const data = {
         slug,
@@ -105,8 +87,6 @@ const Tracking = () => {
       setMessages((prev) => [...prev, data]);
     }
   };
-
-  console.log(messages);
 
   const renderComponent = () => {
     if (isJourneyStarted) {
@@ -138,6 +118,7 @@ const Tracking = () => {
             order={{ lg: 1, xs: 2 }}
           >
             <Typography sx={{ fontSize: "16px" }}>Messages</Typography>
+
             <Box
               sx={{
                 display: "flex",
@@ -192,7 +173,7 @@ const Tracking = () => {
             order={{ lg: 2, xs: 1 }}
             sx={{ display: "flex", flexGrow: 1 }}
           >
-            <TrackingMap coordinate={coordinate} />
+            <TrackingMap coordinates={coordinates} />
           </Grid>
         </Grid>
       );

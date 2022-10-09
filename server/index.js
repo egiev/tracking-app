@@ -34,12 +34,10 @@ branchNamespace.on("connection", (socket) => {
   socket.on("send message", (data) => {
     const { branch } = data;
 
-    // console.log(branch, message);
     branchNamespace.emit(`${branch} send message`, data);
   });
 
   socket.on("send to user", (data) => {
-    console.log("send to user", data);
     branchNamespace.emit("receive message", data);
   });
 

@@ -1,17 +1,18 @@
 import { useState, useEffect, useContext } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import SocketIOClient from "socket.io-client";
-import TrackingMap from "../../components/tracking/tracking-map";
-import { AuthContext } from "../../store/auth.context";
 
+import TrackingMap from "../../../components/tracking/tracking-map";
+import { AuthContext } from "../../../store/auth.context";
+
+import SocketIOClient from "socket.io-client";
 const socket = SocketIOClient("/use-tracking-socket");
 
-const Booking = () => {
+const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [coordinate, setCoordinate] = useState([120.9796101, 14.584492]);
+  const [coordinates, setcoordinates] = useState([120.9796101, 14.584492]);
 
   useEffect(() => {
     const { slug } = user.branch;
@@ -19,11 +20,7 @@ const Booking = () => {
     socket.on(
       `${slug}`,
       (data) => {
-        console.log("connected to admin");
-        if (data) {
-          console.log(data);
-          setCoordinate(data.coordinates);
-        }
+        if (data) setcoordinates(data.coordinates);
       },
       (err) => {
         console.log(err);
@@ -31,7 +28,6 @@ const Booking = () => {
     );
 
     socket.on(`${slug} send message`, (data) => {
-      console.log(data, user);
       setMessages((prev) => [...prev, data]);
     });
 
@@ -137,11 +133,11 @@ const Booking = () => {
           order={{ lg: 2, xs: 1 }}
           sx={{ display: "flex", flexGrow: 1 }}
         >
-          <TrackingMap coordinate={coordinate} />
+          <TrackingMap coordinates={coordinates} />
         </Grid>
       </Grid>
     </>
   );
 };
 
-export default Booking;
+export default Dashboard;

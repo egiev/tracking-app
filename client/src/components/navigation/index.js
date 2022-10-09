@@ -46,8 +46,6 @@ const Navigation = () => {
     return location.pathname === "/";
   };
 
-  console.log(scrollY);
-
   return (
     <AppBar
       sx={{

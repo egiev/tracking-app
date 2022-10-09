@@ -49,8 +49,6 @@ exports.login = async (req, res) => {
     // Validate if user exist in our database
     const user = await User.findOne({ email }).populate("virtualBranch");
 
-    console.log(user);
-
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
       const token = await jwt.sign(

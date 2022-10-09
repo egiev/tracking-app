@@ -1,13 +1,11 @@
-import { useContext, useState } from 'react';
-import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { useContext, useState } from "react";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
-import { AuthContext } from '../../store/auth.context';
+import { AuthContext } from "../../store/auth.context";
 
-const ProtectedRoute = ({ children, redirect = '/admin' }) => {
+const ProtectedRoute = ({ children, redirect = "/admin" }) => {
   const navigate = useNavigate();
   const authCtx = useContext(AuthContext);
-
-  console.log(authCtx);
 
   // useState(() => {
   //   if (authCtx.user) {

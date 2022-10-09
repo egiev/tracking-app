@@ -6,8 +6,8 @@ import { Authenticate } from "../../../services/auth.service";
 import { AuthContext } from "../../../store/auth.context";
 
 const LoginForm = () => {
-  const { authenticate } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { authenticate } = useContext(AuthContext);
   const [formValues, setFormValues] = useState({
     username: "",
     password: "",
@@ -32,7 +32,7 @@ const LoginForm = () => {
 
       authenticate(data);
 
-      navigate("/booking");
+      navigate("/admin/dashboard");
     } catch (e) {}
   };
 

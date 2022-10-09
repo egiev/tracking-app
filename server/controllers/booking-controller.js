@@ -62,7 +62,6 @@ exports.changeStatus = async (req, res) => {
     obj.save();
     res.status(200).json(obj);
   } catch (e) {
-    console.log(e);
     res.status(400).send(e);
   }
 };

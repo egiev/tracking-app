@@ -5,12 +5,12 @@ import { Box, Typography } from "@mui/material";
 import { AuthContext } from "../../store/auth.context";
 import LoginForm from "../../components/auth/login-form";
 
-const Admin = () => {
+const Auth = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    if (user) navigate("/booking", { replace: true });
+    if (user) navigate("/admin/dashboard", { replace: true });
   }, [user, navigate]);
 
   return (
@@ -42,4 +42,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Auth;

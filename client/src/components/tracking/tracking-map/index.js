@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
 const { mapboxgl } = window;
@@ -42,7 +43,6 @@ const TrackingMap = ({ coordinates }) => {
   }, []);
 
   useEffect(() => {
-    console.log(map.current);
     if (marker) marker.remove();
 
     addMarker();
@@ -67,9 +67,9 @@ const TrackingMap = ({ coordinates }) => {
   };
 
   return (
-    <div className={styles.wrapper}>
-      <div ref={mapContainer} className={styles.mapContainer} />
-    </div>
+    <Box sx={styles.wrapper}>
+      <Box ref={mapContainer} sx={styles.mapContainer}></Box>
+    </Box>
   );
 };
 

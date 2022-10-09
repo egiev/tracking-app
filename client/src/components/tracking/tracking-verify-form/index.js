@@ -7,11 +7,9 @@ const VerifyTrackingCode = ({ setUser }) => {
   const [code, setCode] = useState("");
 
   const onVerifyCodeHandler = async () => {
-    console.log(code);
     try {
       const { data } = await StartTracking({ code });
 
-      console.log(data);
       setUser(data);
     } catch (e) {
       console.log(e);
