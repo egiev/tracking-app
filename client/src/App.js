@@ -16,6 +16,7 @@ import Tracking from "./modules/tracking";
 
 import { theme } from "./theme.config";
 import Dashboard from "./modules/admin/dashboard";
+import { SocketContextProvider } from "./store/socket.context";
 
 function App() {
   return (
@@ -23,22 +24,24 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
 
-        <AuthContextProvider>
-          <BranchContextProvider>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <Router>
-                <Routes>
-                  <Route index element={<Home />} />
-                  <Route path='/start-journey' element={<Tracking />} />
-                  <Route path='/admin' element={<Auth />} />
-                  <Route element={<ProtectedRoute />}>
-                    <Route path='/admin/dashboard' element={<Dashboard />} />
-                  </Route>
-                </Routes>
-              </Router>
-            </LocalizationProvider>
-          </BranchContextProvider>
-        </AuthContextProvider>
+        <SocketContextProvider>
+          <AuthContextProvider>
+            <BranchContextProvider>
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <Router>
+                  <Routes>
+                    <Route index element={<Home />} />
+                    <Route path='/start-journey' element={<Tracking />} />
+                    <Route path='/admin' element={<Auth />} />
+                    <Route element={<ProtectedRoute />}>
+                      <Route path='/admin/dashboard' element={<Dashboard />} />
+                    </Route>
+                  </Routes>
+                </Router>
+              </LocalizationProvider>
+            </BranchContextProvider>
+          </AuthContextProvider>
+        </SocketContextProvider>
       </ThemeProvider>
     </>
   );

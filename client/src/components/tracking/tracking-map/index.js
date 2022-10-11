@@ -2,6 +2,8 @@ import { Box } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
 const { mapboxgl } = window;
+mapboxgl.accessToken =
+  "pk.eyJ1IjoicnZtYWJhbnRhIiwiYSI6ImNsNzhuZjlzbjBiazIzcXM2ZDZibnM5bjEifQ.3flpVG66izuFPJpZJrMKog";
 
 const styles = {
   wrapper: {

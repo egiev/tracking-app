@@ -1,142 +1,128 @@
 import { useState, useEffect, useContext } from "react";
+import { NavLink } from "react-router-dom";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
+import DescriptionIcon from "@mui/icons-material/Description";
 
-import TrackingMap from "../../../components/tracking/tracking-map";
+import { socket } from "../../../store/socket.context";
 import { AuthContext } from "../../../store/auth.context";
+import TrackingMap from "../../../components/tracking/tracking-map";
 
-import SocketIOClient from "socket.io-client";
-const socket = SocketIOClient("/use-tracking-socket");
+// import SocketIOClient from "socket.io-client";
+// const socket = SocketIOClient("/use-tracking-socket");
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
-  const [message, setMessage] = useState("");
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [coordinates, setcoordinates] = useState([120.9796101, 14.584492]);
 
   useEffect(() => {
-    const { slug } = user.branch;
+    // socket.on(
+    //   `${slug}`,
+    //   (data) => {
+    //     if (data) setcoordinates(data.coordinates);
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //   }
+    // );
+    // socket.on(`${slug} send message`, (data) => {
+    //   setMessages((prev) => [...prev, data]);
+    // });
+    // return () => {
+    //   socket.off("connect");
+    //   socket.off("disconnect");
+    // };
 
-    socket.on(
-      `${slug}`,
-      (data) => {
-        if (data) setcoordinates(data.coordinates);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    socket.on("booking-user", (users) => setOnlineUsers(users));
 
-    socket.on(`${slug} send message`, (data) => {
-      setMessages((prev) => [...prev, data]);
+    socket.on("room-messages", (messages) => {
+      console.log(messages, "messages");
     });
 
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
+      socket.off("booking-user");
     };
   }, []);
 
-  const onHandleSendMessage = () => {
-    const { slug, branch } = user;
-    if (!!message) {
-      const data = {
-        slug,
-        branch,
-        message,
-      };
+  useEffect(() => {
+    console.log(onlineUsers);
+    if (onlineUsers.length > 0) {
+      const [user] = onlineUsers;
+      const room = `${user.branch}_${user.slug}`;
 
-      socket.emit("send to user", data);
-      setMessage("");
-      setMessages((prev) => [...prev, data]);
+      console.log(user);
+      socket.emit("join-room", room);
     }
+  }, [onlineUsers]);
+
+  const onHandleSendMessage = () => {
+    // const { slug, branch } = user;
+    // if (!!message) {
+    //   const data = {
+    //     slug,
+    //     branch,
+    //     message,
+    //   };
+    //   // socket.emit("send to user", data);
+    //   setMessage("");
+    //   setMessages((prev) => [...prev, data]);
+    // }
   };
 
   return (
-    <>
-      <Grid
-        container
+    <Box
+      sx={{
+        display: "flex",
+        background: "red",
+        height: "100vh",
+      }}
+    >
+      <Box
         sx={{
-          display: "flex",
-          flexDirection: {
-            lg: "row",
-            xs: "column",
-          },
-          height: "100vh",
+          maxWidth: "300px",
+          width: "100%",
+          background: "yellow",
         }}
       >
-        <Grid
-          item
-          lg={3}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            height: { lg: "100%", xs: "300px" },
-            background: "white",
-            p: {
-              xs: 2,
-              lg: 4,
-            },
-          }}
-          order={{ lg: 1, xs: 2 }}
-        >
-          <Typography sx={{ fontSize: "16px" }}>Messages</Typography>
-          <Box
-            sx={{
-              display: "flex",
-              height: "calc(100% - 56px)",
-              overflowY: "auto",
-              flexDirection: "column",
-              mb: 4,
-            }}
-          >
-            {messages.map((obj, i) => (
-              <Box
-                key={`message-${i}`}
-                sx={{
-                  textAlign: obj.slug === user.slug ? "right" : "left",
-                  p: 1,
-                }}
-              >
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                  {obj.slug === user.slug ? "You" : "User"}
-                </Typography>
+        <Typography>Logo</Typography>
 
-                <Typography sx={{ fontSize: "14px" }}>{obj.message}</Typography>
-              </Box>
-            ))}
-          </Box>
+        <ul>
+          <li>
+            <NavLink to='/admin'>
+              <DescriptionIcon />
+              Home
+            </NavLink>
+          </li>
+        </ul>
+      </Box>
 
-          <Box sx={{ display: "flex" }}>
-            <TextField
-              required
-              label='Message'
-              placeholder='Message admin'
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              sx={{ width: "100%", mr: 1 }}
-            />
+      <Box
+        sx={{
+          width: "100%",
+          background: "white",
+          p: 4,
+        }}
+      >
+        <TrackingMap coordinates={coordinates} />
+      </Box>
 
-            <Button
-              variant='contained'
-              endIcon={<SendIcon />}
-              onClick={onHandleSendMessage}
-            >
-              Send
-            </Button>
-          </Box>
-        </Grid>
-
-        <Grid
-          item
-          lg={9}
-          order={{ lg: 2, xs: 1 }}
-          sx={{ display: "flex", flexGrow: 1 }}
-        >
-          <TrackingMap coordinates={coordinates} />
-        </Grid>
-      </Grid>
-    </>
+      <Box
+        sx={{
+          maxWidth: "300px",
+          width: "100%",
+          background: "green",
+        }}
+      >
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore
+        quibusdam nihil beatae, pariatur temporibus quasi vel veniam dicta
+        dolores soluta quo omnis, magni nulla quod illo sunt quis incidunt
+        ducimus!
+        {onlineUsers.map((user) => (
+          <Typography key={user.slug}>{user.name}</Typography>
+        ))}
+      </Box>
+    </Box>
   );
 };
 

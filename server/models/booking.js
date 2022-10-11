@@ -10,6 +10,7 @@ const BookingSchema = new mongoose.Schema({
   companions: { type: Number, required: true },
   date_of_departure: { type: String, required: true },
   status: { type: String, default: null },
+  is_online: { type: Boolean, default: false },
   code: { type: String, default: null },
   created_at: { type: String, default: Date },
 });

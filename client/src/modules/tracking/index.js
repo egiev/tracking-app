@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
+import { socket } from "../../store/socket.context";
 import Navigation from "../../components/navigation";
 import TrackingMap from "../../components/tracking/tracking-map";
 import VerifyTrackingCode from "../../components/tracking/tracking-verify-form";
-
-import SocketIOClient from "socket.io-client";
-const socket = SocketIOClient("/use-tracking-socket");
 
 const Tracking = () => {
   const [user, setUser] = useState(null);
@@ -17,15 +15,49 @@ const Tracking = () => {
   const [coordinates, setCoordinates] = useState([]);
 
   useEffect(() => {
-    socket.on("receive message", (data) => {
-      console.log("receive", data);
-      setMessages((prev) => [...prev, data]);
+    // socket.on("receive message", (data) => {
+    //   console.log("receive", data);
+    //   setMessages((prev) => [...prev, data]);
+    // });
+    // return () => {
+    //   socket.off("receive message");
+    // };
+    // const u = {
+    //   _id: "6343d0e2d4ad43fc223a81b0",
+    //   slug: "8303ccbd-9920-43ca-a337-c7a91d439320",
+    //   branch: "14580e3e-c417-46eb-8ff4-baaa3bc6a04c",
+    //   name: "jonathan",
+    //   email: "reginald.mabanta@gmail.com",
+    //   contact: "099999999",
+    //   companions: 4,
+    //   date_of_departure: "09/24/2022",
+    //   status: "approve",
+    //   is_online: true,
+    //   code: "eNKoEa0ths",
+    //   created_at:
+    //     "Mon Oct 10 2022 07:59:30 GMT+0000 (Coordinated Universal Time)",
+    //   __v: 0,
+    // };
+    // setUser(u);
+    socket.on("room-messages", (messages) => {
+      console.log(messages, "messages");
     });
 
     return () => {
-      socket.off("receive message");
+      socket.off("booking-user");
     };
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      socket.emit("join-room", `${user.branch}_${user.slug}`);
+      socket.emit("booking-user", user);
+    }
+
+    return () => {
+      socket.off("join-room");
+    };
+  }, [user]);
 
   const startTracking = async () => {
     if (navigator && user) {
@@ -34,7 +66,13 @@ const Tracking = () => {
           const { longitude, latitude } = position.coords;
           const { name, branch } = user;
 
-          socket.emit("join server", {
+          // socket.emit("join server", {
+          //   name,
+          //   branch,
+          //   coordinates: [longitude, latitude],
+          // });
+
+          socket.emit("new-user", {
             name,
             branch,
             coordinates: [longitude, latitude],
@@ -76,15 +114,15 @@ const Tracking = () => {
 
     if (!!message) {
       const data = {
-        slug,
-        branch,
-        message,
+        room: `${branch}_${slug}`,
+        content: message,
+        from: user,
       };
 
-      socket.emit("send message", data);
+      socket.emit("message-room", data);
 
       setMessage("");
-      setMessages((prev) => [...prev, data]);
+      // setMessages((prev) => [...prev, data]);
     }
   };
 

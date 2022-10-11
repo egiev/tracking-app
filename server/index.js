@@ -3,46 +3,69 @@ const { Server } = require("socket.io");
 const { API_PORT } = process.env;
 
 const Branch = require("./models/branch");
+const Message = require("./models/message");
+const Utils = require("./utils/parser-utils");
 
 const app = require("./app");
 const port = process.env.PORT || API_PORT;
 
 // Models
 const Booking = require("./models/booking");
+const { parse } = require("path");
 
 // Create live connection
 const server = http.createServer(app);
 const io = new Server(server);
 io.sockets.setMaxListeners(0);
 
-const branchNamespace = io.of("/use-tracking-socket");
+io.on("connection", (socket) => {
+  socket.on("booking-user", async (payload) => {
+    const { slug } = payload;
+    const user = await Booking.findOne({ slug });
+    user.is_online = true;
+    await user.save();
 
-const users = [];
-const rooms = [];
+    // Will use as a referrence
+    socket.bookingUser = user;
 
-branchNamespace.on("connection", (socket) => {
-  socket.on("join server", (data) => {
-    const { branch, slug } = data;
-
-    const index = users.findIndex((user) => user.slug === slug);
-
-    if (index < 0) users.push(data);
-
-    branchNamespace.emit(`${branch}`, data);
+    // Get all online users
+    const members = await Booking.find({ is_online: true });
+    io.emit("booking-user", members);
   });
 
-  socket.on("send message", (data) => {
-    const { branch } = data;
+  socket.on("join-room", async (room) => {
+    socket.join(room);
 
-    branchNamespace.emit(`${branch} send message`, data);
+    const roomMessages = await Utils.getLastMessagesFromRoom(room);
+    socket.emit("room-messages", roomMessages);
   });
 
-  socket.on("send to user", (data) => {
-    branchNamespace.emit("receive message", data);
+  socket.on("message-room", async ({ room, content, sender }) => {
+    await Message.create({
+      from: sender,
+      to: room,
+      content,
+      date: new Date(),
+    });
+
+    const roomMessages = await Utils.getLastMessagesFromRoom(room);
+    io.to(room).emit("room-messages", roomMessages);
   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
+  socket.on("disconnect", async () => {
+    const { bookingUser } = socket;
+
+    if (bookingUser) {
+      const user = await Booking.findOne({ slug: bookingUser.slug });
+      user.is_online = false;
+      await user.save();
+
+      delete socket["bookingUser"];
+    }
+
+    // Get all online user
+    const members = await Booking.find({ is_online: true });
+    io.emit("booking-user", members);
   });
 });
 
