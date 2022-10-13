@@ -15,8 +15,10 @@ import Tracking from "./modules/tracking";
 // import Dashboard from './modules/dashboard/Dashboard';
 
 import { theme } from "./theme.config";
-import Dashboard from "./modules/admin/dashboard";
 import { SocketContextProvider } from "./store/socket.context";
+import AdminDashboard from "./modules/admin/admin-dashboard";
+import AdminBookings from "./modules/admin/admin-bookings";
+import AdminMessages from "./modules/admin/admin-messages";
 
 function App() {
   return (
@@ -31,10 +33,21 @@ function App() {
                 <Router>
                   <Routes>
                     <Route index element={<Home />} />
-                    <Route path='/start-journey' element={<Tracking />} />
-                    <Route path='/admin' element={<Auth />} />
+                    <Route path="/start-journey" element={<Tracking />} />
+                    <Route path="/admin" element={<Auth />} />
                     <Route element={<ProtectedRoute />}>
-                      <Route path='/admin/dashboard' element={<Dashboard />} />
+                      <Route
+                        path="/admin/dashboard"
+                        element={<AdminDashboard />}
+                      />
+                      <Route
+                        path="/admin/bookings"
+                        element={<AdminBookings />}
+                      />
+                      <Route
+                        path="/admin/messages"
+                        element={<AdminMessages />}
+                      />
                     </Route>
                   </Routes>
                 </Router>

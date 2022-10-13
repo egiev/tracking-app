@@ -1,13 +1,13 @@
-import axios from 'axios';
+import axios from "axios";
 
-import { BASE_URI } from '../config';
+import { BASE_URI } from "../config";
 
 axios.interceptors.request.use((config) => {
   try {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem("user"));
 
     if (user.token) {
-      config.headers['Authorization'] = `Bearer ${user.token}`;
+      config.headers["Authorization"] = `Bearer ${user.token}`;
     }
 
     return config;

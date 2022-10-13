@@ -19,53 +19,63 @@ const io = new Server(server);
 io.sockets.setMaxListeners(0);
 
 io.on("connection", (socket) => {
+  socket.on("online-users", async (branch) => {
+    const members = await Booking.find({ branch, is_online: true });
+
+    io.emit("booking-user", members);
+  });
+
   socket.on("booking-user", async (payload) => {
     const { slug } = payload;
     const user = await Booking.findOne({ slug });
     user.is_online = true;
     await user.save();
 
-    // Will use as a referrence
+    // Will use as a referrence for user
     socket.bookingUser = user;
 
     // Get all online users
     const members = await Booking.find({ is_online: true });
+
     io.emit("booking-user", members);
   });
 
-  socket.on("join-room", async (room) => {
-    socket.join(room);
+  socket.on("join-room", async (currentRoom, previousRoom) => {
+    socket.join(currentRoom);
+    socket.leave(previousRoom);
 
-    const roomMessages = await Utils.getLastMessagesFromRoom(room);
+    let roomMessages = await Utils.getLastMessagesFromRoom(currentRoom);
+    roomMessages = Utils.sortRoomMessagesByKey(roomMessages, "_id");
     socket.emit("room-messages", roomMessages);
   });
 
-  socket.on("message-room", async ({ room, content, sender }) => {
+  socket.on("message-room", async ({ room, content, sender, date, time }) => {
+    console.log(date, time);
     await Message.create({
       from: sender,
       to: room,
       content,
-      date: new Date(),
+      date,
+      time,
     });
 
-    const roomMessages = await Utils.getLastMessagesFromRoom(room);
+    let roomMessages = await Utils.getLastMessagesFromRoom(room);
+    roomMessages = Utils.sortRoomMessagesByKey(roomMessages);
     io.to(room).emit("room-messages", roomMessages);
   });
 
   socket.on("disconnect", async () => {
-    const { bookingUser } = socket;
-
-    if (bookingUser) {
-      const user = await Booking.findOne({ slug: bookingUser.slug });
-      user.is_online = false;
-      await user.save();
-
-      delete socket["bookingUser"];
-    }
-
-    // Get all online user
-    const members = await Booking.find({ is_online: true });
-    io.emit("booking-user", members);
+    // const { bookingUser } = socket;
+    // if (bookingUser) {
+    //   const user = await Booking.findOne({ slug: bookingUser.slug });
+    //   user.is_online = false;
+    //   await user.save();
+    //   delete socket["bookingUser"];
+    // }
+    // // Get all online user
+    // const members = await Booking.find({ is_online: true });
+    // console.log(members);
+    // io.emit("booking-user", members);
   });
 });
 

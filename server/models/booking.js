@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 
 const BookingSchema = new mongoose.Schema({
-  slug: { type: String, default: uuidv4() },
+  slug: { type: String, default: () => uuidv4() },
   branch: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, required: true },

@@ -40,7 +40,7 @@ const Home = () => {
               data-aos-delay='300'
               data-aos-duration='1000'
             >
-              Akyat pinas{" "}
+              Akyat Pinas{" "}
             </Typography>
 
             <Typography

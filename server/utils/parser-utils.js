@@ -9,4 +9,7 @@ const getLastMessagesFromRoom = async (room) => {
   return messages;
 };
 
-module.exports = { getLastMessagesFromRoom };
+const sortRoomMessagesByKey = (messages) =>
+  messages.sort((a, b) => a._id.localeCompare(b._id));
+
+module.exports = { getLastMessagesFromRoom, sortRoomMessagesByKey };

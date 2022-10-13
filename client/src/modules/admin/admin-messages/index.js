@@ -1,127 +1,85 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { NavLink } from "react-router-dom";
 import {
   Box,
   Button,
   Grid,
+  IconButton,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 import moment from "moment";
 
-import { socket } from "../../store/socket.context";
-import Navigation from "../../components/navigation";
-import TrackingMap from "../../components/tracking/tracking-map";
-import VerifyTrackingCode from "../../components/tracking/tracking-verify-form";
+import { socket } from "../../../store/socket.context";
+import { AuthContext } from "../../../store/auth.context";
+import TrackingMap from "../../../components/tracking/tracking-map";
+import Layout from "../../../components/ui/layout/layout";
+import SendIcon from "@mui/icons-material/Send";
 
-const Tracking = () => {
+const AdminMessages = () => {
   const { palette } = useTheme();
-  const [user, setUser] = useState(null);
+  const { user } = useContext(AuthContext);
+  const [coordinates, setcoordinates] = useState([120.9796101, 14.584492]);
+
+  const [currentRoom, setCurrentRoom] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [privateMessage, setPrivateMessage] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [isJourneyStarted, setIsJourneyStarted] = useState(false);
-  const [coordinates, setCoordinates] = useState([]);
+  const [isShowMessage, setIsShowMessage] = useState(true);
 
   useEffect(() => {
-    // socket.on("receive message", (data) => {
-    //   console.log("receive", data);
+    // socket.on(
+    //   `${slug}`,
+    //   (data) => {
+    //     if (data) setcoordinates(data.coordinates);
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //   }
+    // );
+    // socket.on(`${slug} send message`, (data) => {
     //   setMessages((prev) => [...prev, data]);
     // });
     // return () => {
-    //   socket.off("receive message");
+    //   socket.off("connect");
+    //   socket.off("disconnect");
     // };
-    // const u = {
-    //   _id: "6343d0e2d4ad43fc223a81b0",
-    //   slug: "8303ccbd-9920-43ca-a337-c7a91d439320",
-    //   branch: "14580e3e-c417-46eb-8ff4-baaa3bc6a04c",
-    //   name: "jonathan",
-    //   email: "reginald.mabanta@gmail.com",
-    //   contact: "099999999",
-    //   companions: 4,
-    //   date_of_departure: "09/24/2022",
-    //   status: "approve",
-    //   is_online: true,
-    //   code: "eNKoEa0ths",
-    //   created_at:
-    //     "Mon Oct 10 2022 07:59:30 GMT+0000 (Coordinated Universal Time)",
-    //   __v: 0,
-    // };
-    // setUser(u);
 
-    socket.on("room-messages", (messages) => {
-      console.log(messages, "messages");
-      setMessages(messages);
-    });
+    socket.emit("online-users", user.branch.slug);
+
+    socket.on("booking-user", (users) => setOnlineUsers(users));
+
+    socket.on("room-messages", (messages) => setMessages(messages));
 
     return () => {
       socket.off("booking-user");
+      socket.off("room-messages");
     };
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      socket.emit("join-room", `${user.branch}_${user.slug}`);
-      socket.emit("booking-user", user);
-    }
-
-    return () => {
-      socket.off("join-room");
-    };
-  }, [user]);
-
-  const startTracking = async () => {
-    if (navigator && user) {
-      navigator.geolocation.watchPosition(
-        (position) => {
-          const { longitude, latitude } = position.coords;
-          const { name, branch } = user;
-
-          // socket.emit("join server", {
-          //   name,
-          //   branch,
-          //   coordinates: [longitude, latitude],
-          // });
-
-          socket.emit("new-user", {
-            name,
-            branch,
-            coordinates: [longitude, latitude],
-          });
-
-          setIsJourneyStarted(true);
-          setCoordinates([longitude, latitude]);
-        },
-        () => {},
-        { enableHighAccuracy: true }
-      );
-    }
+  const joinRoom = (room) => {
+    // setCurrentRoom
+    setCurrentRoom(room);
+    socket.emit("join-room", room, currentRoom);
   };
 
-  const renderAction = () => {
-    if (user) {
-      return (
-        <Box sx={{ maxWidth: "320px" }}>
-          <Button
-            type="button"
-            variant="contained"
-            size="large"
-            sx={{ mt: 3, height: "50px", width: "100%" }}
-            onClick={startTracking}
-          >
-            Start Journey
-          </Button>
-        </Box>
-      );
-    }
+  // useEffect(() => {
+  //   console.log(onlineUsers);
+  //   if (onlineUsers.length > 0) {
+  //     const [user] = onlineUsers;
+  //     const room = `${user.branch}_${user.slug}`;
 
-    return (
-      <VerifyTrackingCode startTracking={startTracking} setUser={setUser} />
-    );
-  };
+  //     console.log(user);
+  //     socket.emit("join-room", room);
+  //   }
+  // }, [onlineUsers]);
 
   const onHandleSendMessage = () => {
-    const { slug, branch } = user;
+    const { slug, branch } = privateMessage;
+
+    console.log(moment().toNow());
 
     if (!!message) {
       const data = {
@@ -139,40 +97,113 @@ const Tracking = () => {
     }
   };
 
-  const renderComponent = () => {
-    if (isJourneyStarted) {
-      return (
-        <Grid
-          container
+  console.log(messages, "user");
+
+  return (
+    <Layout>
+      <Box sx={{ display: "flex", height: "100%" }}>
+        <Box
           sx={{
             display: "flex",
-            flexDirection: {
-              lg: "row",
-              xs: "column",
-            },
-            height: "calc(100vh - 68px)",
+            width: "auto",
+            background: "white",
           }}
         >
-          <Grid
-            item
-            lg={3}
+          <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              height: { lg: "100%", xs: "300px" },
-              background: "white",
-              p: {
-                xs: 2,
-                lg: 4,
-              },
+              width: "320px",
+              py: 4,
+              px: 2,
             }}
-            order={{ lg: 1, xs: 2 }}
           >
-            <Typography sx={{ fontSize: "16px" }}>Messages</Typography>
+            <Typography
+              variant="h5"
+              component="h5"
+              sx={{
+                mb: 4,
+              }}
+            >
+              Messages
+            </Typography>
+
+            {onlineUsers.map((user) => (
+              <Box
+                key={user.slug}
+                component="a"
+                onClick={() => {
+                  // setIsShowMessage(!isShowMessage);
+                  setPrivateMessage(user);
+                  joinRoom(`${user.branch}_${user.slug}`);
+                }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  columnGap: 2,
+                  height: "60px",
+                  borderRadius: 0.5,
+                  cursor: "pointer",
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "relative",
+                  }}
+                >
+                  <Box
+                    alt="avatar"
+                    component="img"
+                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+                    sx={{
+                      height: "60px",
+                      width: "60px",
+                      overflow: "hidden",
+                      borderRadius: "40px",
+                      objectFit: "cover",
+                    }}
+                  />
+
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      background: "green",
+                      bottom: "10px",
+                      right: "4px",
+                      width: "12px",
+                      height: "12px",
+                      borderRadius: "6px",
+                    }}
+                  />
+                </Box>
+
+                <Box>
+                  <Typography>{user.name}</Typography>
+                  <Typography>{user.contact}</Typography>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+
+          <Box
+            sx={{
+              width: isShowMessage ? "300px" : "0px",
+              transition: "all .3s ease",
+              py: 4,
+              px: 2,
+            }}
+          >
+            <Typography
+              variant="h5"
+              component="h5"
+              sx={{
+                mb: 4,
+              }}
+            >
+              Chat with {privateMessage && privateMessage.name}
+            </Typography>
 
             <Box
               sx={{
-                maxHeight: "calc(100% - 56px)",
+                maxHeight: "calc(100% - 150px)",
                 overflow: "auto",
                 mb: 2,
               }}
@@ -230,7 +261,9 @@ const Tracking = () => {
                               order: msg.from.slug === user.slug ? 2 : 1,
                             }}
                           >
-                            {msg.from.slug === user.slug ? "You" : "Admin"}
+                            {msg.from.slug === user.slug
+                              ? "You"
+                              : msg.from.name}
                           </Typography>
 
                           <Typography
@@ -277,11 +310,12 @@ const Tracking = () => {
               ))}
             </Box>
 
-            <Box sx={{ display: "flex" }}>
+            <Box sx={{ display: "flex", mt: 4 }}>
               <TextField
                 required
                 label="Message"
-                placeholder="Message admin"
+                size="small"
+                placeholder="Message "
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 sx={{ width: "100%", mr: 1 }}
@@ -291,47 +325,23 @@ const Tracking = () => {
                 variant="contained"
                 endIcon={<SendIcon />}
                 onClick={onHandleSendMessage}
-              >
-                Send
-              </Button>
+              />
             </Box>
-          </Grid>
+          </Box>
+        </Box>
 
-          <Grid
-            item
-            lg={9}
-            order={{ lg: 2, xs: 1 }}
-            sx={{ display: "flex", flexGrow: 1 }}
-          >
-            <TrackingMap coordinates={coordinates} />
-          </Grid>
-        </Grid>
-      );
-    }
-
-    return (
-      <Box sx={{ height: "calc(100vh - 70px)", background: "#fff" }}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
+            width: "100%",
+            background: "white",
+            p: 4,
           }}
         >
-          {renderAction()}
+          <TrackingMap coordinates={coordinates} />
         </Box>
       </Box>
-    );
-  };
-
-  return (
-    <>
-      <Navigation />
-
-      {renderComponent()}
-    </>
+    </Layout>
   );
 };
 
-export default Tracking;
+export default AdminMessages;
