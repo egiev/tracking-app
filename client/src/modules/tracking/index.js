@@ -49,25 +49,19 @@ const Tracking = () => {
     // };
     // setUser(u);
 
-    socket.on("room-messages", (messages) => {
-      console.log(messages, "messages");
-      setMessages(messages);
-    });
+    socket.on("room-messages", (messages) => setMessages(messages));
 
-    return () => {
-      socket.off("booking-user");
-    };
+    return () => socket.off("room-messages");
   }, []);
 
   useEffect(() => {
     if (user) {
-      socket.emit("join-room", `${user.branch}_${user.slug}`);
+      const roomId = `${user.branch}_${user.slug}`;
+
+      socket.emit("join-room", roomId);
+      socket.emit("join-tracking-room", user.branch);
       socket.emit("booking-user", user);
     }
-
-    return () => {
-      socket.off("join-room");
-    };
   }, [user]);
 
   const startTracking = async () => {
@@ -75,19 +69,8 @@ const Tracking = () => {
       navigator.geolocation.watchPosition(
         (position) => {
           const { longitude, latitude } = position.coords;
-          const { name, branch } = user;
 
-          // socket.emit("join server", {
-          //   name,
-          //   branch,
-          //   coordinates: [longitude, latitude],
-          // });
-
-          socket.emit("new-user", {
-            name,
-            branch,
-            coordinates: [longitude, latitude],
-          });
+          socket.emit("tracking-room", user, [longitude, latitude]);
 
           setIsJourneyStarted(true);
           setCoordinates([longitude, latitude]);
@@ -260,10 +243,7 @@ const Tracking = () => {
                             py: 1,
                             px: 1.5,
                             textAlign: "left",
-                            width: "fit-content",
                             marginLeft: msg.from.slug === user.slug && "auto",
-                            maxWidth: "80%",
-                            width: "fit-content",
                             wordBreak: "break-word",
                             whiteSpace: "normal",
                           }}

@@ -4,6 +4,7 @@ const { API_PORT } = process.env;
 
 const Branch = require("./models/branch");
 const Message = require("./models/message");
+const Tracking = require("./models/tracking");
 const Utils = require("./utils/parser-utils");
 
 const app = require("./app");
@@ -64,18 +65,54 @@ io.on("connection", (socket) => {
     io.to(room).emit("room-messages", roomMessages);
   });
 
+  socket.on("join-tracking-room", async (branch) => {
+    socket.join(branch);
+
+    const trackings = await Tracking.find({ "user.branch": branch });
+
+    io.to(branch).emit("tracking-room", trackings);
+  });
+
+  socket.on("tracking-room", async (user, coordinates) => {
+    const { slug, branch } = user;
+    const track = await Tracking.findOne({ "user.slug": slug });
+
+    if (track) {
+      console.log(track);
+      track.location.coordinates.push(coordinates);
+      track.save();
+      // track;
+      // track
+    } else {
+      await Tracking.create({
+        user,
+        location: {
+          type: "LineString",
+          coordinates: coordinates,
+        },
+      });
+    }
+
+    const updatedTrack = await Tracking.findOne({ "user.slug": slug });
+
+    console.log(updatedTrack, updatedTrack);
+
+    io.to(branch).emit("user-tracking-room", updatedTrack);
+  });
+
   socket.on("disconnect", async () => {
-    // const { bookingUser } = socket;
-    // if (bookingUser) {
-    //   const user = await Booking.findOne({ slug: bookingUser.slug });
-    //   user.is_online = false;
-    //   await user.save();
-    //   delete socket["bookingUser"];
-    // }
-    // // Get all online user
-    // const members = await Booking.find({ is_online: true });
-    // console.log(members);
-    // io.emit("booking-user", members);
+    const { bookingUser } = socket;
+    if (bookingUser) {
+      const user = await Booking.findOne({ slug: bookingUser.slug });
+      user.is_online = false;
+      await user.save();
+      delete socket["bookingUser"];
+    }
+
+    // Get all online user
+    const members = await Booking.find({ is_online: true });
+    console.log(members);
+    io.emit("booking-user", members);
   });
 });
 

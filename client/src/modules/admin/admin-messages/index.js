@@ -16,11 +16,14 @@ import { AuthContext } from "../../../store/auth.context";
 import TrackingMap from "../../../components/tracking/tracking-map";
 import Layout from "../../../components/ui/layout/layout";
 import SendIcon from "@mui/icons-material/Send";
+import AdminTrackingMap from "../../../components/admin/admin-tracking-map";
 
 const AdminMessages = () => {
   const { palette } = useTheme();
   const { user } = useContext(AuthContext);
-  const [coordinates, setcoordinates] = useState([120.9796101, 14.584492]);
+  // const [coordinates, setcoordinates] = useState([120.9796101, 14.584492]);
+
+  const [usersTracking, setUsersTracking] = useState([]);
 
   const [currentRoom, setCurrentRoom] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -30,28 +33,29 @@ const AdminMessages = () => {
   const [isShowMessage, setIsShowMessage] = useState(true);
 
   useEffect(() => {
-    // socket.on(
-    //   `${slug}`,
-    //   (data) => {
-    //     if (data) setcoordinates(data.coordinates);
-    //   },
-    //   (err) => {
-    //     console.log(err);
-    //   }
-    // );
-    // socket.on(`${slug} send message`, (data) => {
-    //   setMessages((prev) => [...prev, data]);
-    // });
-    // return () => {
-    //   socket.off("connect");
-    //   socket.off("disconnect");
-    // };
-
     socket.emit("online-users", user.branch.slug);
+
+    socket.emit("join-tracking-room", user.branch.slug);
 
     socket.on("booking-user", (users) => setOnlineUsers(users));
 
     socket.on("room-messages", (messages) => setMessages(messages));
+
+    socket.on("tracking-room", (data) => setUsersTracking(data));
+
+    socket.on("user-tracking-room", (data) => {
+      const { user } = data;
+      const idx = usersTracking.findIndex(({ u }) => u.slug === user.slug);
+
+      if (idx > 0) {
+        const newList = [...usersTracking];
+        newList[idx] = data;
+
+        setUsersTracking(newList);
+      } else {
+        setUsersTracking((prev) => [...prev, data]);
+      }
+    });
 
     return () => {
       socket.off("booking-user");
@@ -295,8 +299,6 @@ const AdminMessages = () => {
                             textAlign: "left",
                             width: "fit-content",
                             marginLeft: msg.from.slug === user.slug && "auto",
-                            maxWidth: "80%",
-                            width: "fit-content",
                             wordBreak: "break-word",
                             whiteSpace: "normal",
                           }}
@@ -337,7 +339,11 @@ const AdminMessages = () => {
             p: 4,
           }}
         >
-          <TrackingMap coordinates={coordinates} />
+          {/* {JSON.stringify(usersTracking)} */}
+          {/* <TrackingMap coordinates={coordinates} /> */}
+          {usersTracking.length > 0 && (
+            <AdminTrackingMap users={usersTracking} />
+          )}
         </Box>
       </Box>
     </Layout>
